@@ -7,8 +7,8 @@
 
 <head>
   <meta charset="UTF-8">
-  <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon.png">
-  <link rel="icon" href="/img/favicon.png">
+  <link rel="apple-touch-icon" sizes="76x76" href="/images/tab-icon/blog.png">
+  <link rel="icon" href="/images/tab-icon/blog.png">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
   <meta http-equiv="x-ua-compatible" content="ie=edge">
   
@@ -173,7 +173,7 @@
 </nav>
 
     <div class="banner" id="banner" parallax=true
-         style="background: url('/img/default.png') no-repeat center center;
+         style="background: url('/images/banner/wallhaven-k7v9yq.png') no-repeat center center;
            background-size: cover;">
       <div class="full-bg-img">
         <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
@@ -251,6 +251,12 @@
           <article class="post-content mx-auto">
             <!-- SEO header -->
             <h1 style="display: none">Elasticsearch中Script脚本执行除法遇到的问题</h1>
+            
+              <p class="note note-info">
+                
+                  本文最后更新于：2022年4月1日 上午
+                
+              </p>
             
             <div class="markdown-body">
               <p>最近有一个需求，需要修改ES文档中的金额，以前是以 <code>元</code> 为单位，现在要换算成以 <code>万元</code> 为单位，但并不是所有数据都需要做处理，有一个Excel存储着不需要处理的数据。我第一时间想到的就是用 <code>Python</code> 写一个脚本处理ES文档，噼里啪啦一顿操作之后，基本就实现了该功能。但是处理的结果并不是预期的那样。下面我简单的举一个例子来复现一下我所遇到的问题。</p>

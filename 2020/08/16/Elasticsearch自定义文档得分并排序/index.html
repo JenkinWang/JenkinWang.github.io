@@ -7,8 +7,8 @@
 
 <head>
   <meta charset="UTF-8">
-  <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon.png">
-  <link rel="icon" href="/img/favicon.png">
+  <link rel="apple-touch-icon" sizes="76x76" href="/images/tab-icon/blog.png">
+  <link rel="icon" href="/images/tab-icon/blog.png">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
   <meta http-equiv="x-ua-compatible" content="ie=edge">
   
@@ -175,7 +175,7 @@
 </nav>
 
     <div class="banner" id="banner" parallax=true
-         style="background: url('/img/default.png') no-repeat center center;
+         style="background: url('/images/banner/wallhaven-k7v9yq.png') no-repeat center center;
            background-size: cover;">
       <div class="full-bg-img">
         <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
@@ -253,6 +253,12 @@
           <article class="post-content mx-auto">
             <!-- SEO header -->
             <h1 style="display: none">Elasticsearch自定义文档得分并排序</h1>
+            
+              <p class="note note-info">
+                
+                  本文最后更新于：2022年4月1日 上午
+                
+              </p>
             
             <div class="markdown-body">
               <p>大多数情况下，我们需要对查询结果排序，比方说按最新时间降序、按金额降序等。我们只需要对相应的字段 <code>sort</code> 即可。但有时候也会出现一些复杂的情况，比方说有A、B、C、D、E类数据，他想让你给这类数据重新定义优先级，按照B、E、D、A、C的顺序展示，并且每类数据内部按时间降序。然而最近我们也提出了一个类似这样的需求，查阅相关文档后，发现Elasticsearch里的<code>function_socre</code>函数可以实现这一功能， 遂将此学习内容做一个记录。</p>

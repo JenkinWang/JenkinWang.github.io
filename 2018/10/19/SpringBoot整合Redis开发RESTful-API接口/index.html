@@ -7,8 +7,8 @@
 
 <head>
   <meta charset="UTF-8">
-  <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon.png">
-  <link rel="icon" href="/img/favicon.png">
+  <link rel="apple-touch-icon" sizes="76x76" href="/images/tab-icon/blog.png">
+  <link rel="icon" href="/images/tab-icon/blog.png">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
   <meta http-equiv="x-ua-compatible" content="ie=edge">
   
@@ -181,7 +181,7 @@
 </nav>
 
     <div class="banner" id="banner" parallax=true
-         style="background: url('/img/default.png') no-repeat center center;
+         style="background: url('/images/banner/wallhaven-k7v9yq.png') no-repeat center center;
            background-size: cover;">
       <div class="full-bg-img">
         <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
@@ -259,6 +259,12 @@
           <article class="post-content mx-auto">
             <!-- SEO header -->
             <h1 style="display: none">SpringBoot整合Redis开发RESTful API接口</h1>
+            
+              <p class="note note-info">
+                
+                  本文最后更新于：2022年4月1日 上午
+                
+              </p>
             
             <div class="markdown-body">
               <h3 id="项目框架"><a href="#项目框架" class="headerlink" title="项目框架"></a><a href="#%E9%A1%B9%E7%9B%AE%E6%A1%86%E6%9E%B6" title="项目框架"></a>项目框架</h3><figure class="highlight java"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs Java">├── pom.xml  <br>├── springbootreidsrestfulapi.iml  <br>├── src  <br>│   ├── main  <br>│   │   ├── java  <br>│   │   │   └── com  <br>│   │   │       └── jenkin  <br>│   │   │           └── springboot  <br>│   │   │               ├── App.java  <br>│   │   │               ├── controller  <br>│   │   │               │   └── UserController.java  <br>│   │   │               ├── pojo  <br>│   │   │               │   ├── RedisConfigBean.java  <br>│   │   │               │   └── User.java  <br>│   │   │               ├── redis  <br>│   │   │               │   └── RedisConfig.java  <br>│   │   │               └── service  <br>│   │   │                   ├── UserService.java  <br>│   │   │                   └── impl  <br>│   │   │                       └── UserServiceImpl.java  <br>│   │   └── resources  <br>│   │       └── application.properties  <br></code></pre></div></td></tr></table></figure>
