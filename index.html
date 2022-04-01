@@ -1,0 +1,824 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon.png">
+  <link rel="icon" href="/img/favicon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="JenkinWang">
+  <meta name="keywords" content="Jenkin Wang,jenkinwang,慵懒的程序猿">
+  
+    <meta name="description" content="一只慵懒的程序猿">
+<meta property="og:type" content="website">
+<meta property="og:title" content="JenkinWang&#39;s Blog">
+<meta property="og:url" content="https://jenkinwang.github.io/index.html">
+<meta property="og:site_name" content="JenkinWang&#39;s Blog">
+<meta property="og:description" content="一只慵懒的程序猿">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:author" content="JenkinWang">
+<meta property="article:tag" content="Jenkin Wang,jenkinwang,慵懒的程序猿">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  <title>JenkinWang&#39;s Blog</title>
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/css/bootstrap.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_ba1fz6golrf.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+<!-- 自定义样式保持在最底部 -->
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    var CONFIG = {"hostname":"jenkinwang.github.io","root":"/","version":"1.8.14","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"right","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"copy_btn":true,"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"baidu":"7ed5592b09af70dfe085339cb29b1318","google":"UA-127759237-1","gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":"XXMm2rtWBI6cupjbXDo12wMe-gzGzoHsz","app_key":"eUc4Yy11oCnWhPfvgCsIso4g","server_url":"https://xxmm2rtw.lc-cn-n1-shared.com","path":"window.location.pathname","ignore_local":true}},"search_path":"/local-search.xml"};
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+<meta name="generator" content="Hexo 6.1.0"></head>
+
+
+<body>
+  <header style="height: 100vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>一只慵懒的程序猿</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              &nbsp;<i class="iconfont icon-search"></i>&nbsp;
+            </a>
+          </li>
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    <div class="banner" id="banner" parallax=true
+         style="background: url('/img/default.png') no-repeat center center;
+           background-size: cover;">
+      <div class="full-bg-img">
+        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+          <div class="page-header text-center fade-in-up">
+            <span class="h2" id="subtitle" title="Talk Is Cheap. Show Me The Code.">
+              
+            </span>
+
+            
+          </div>
+
+          
+            <div class="scroll-down-bar">
+              <i class="iconfont icon-arrowdown"></i>
+            </div>
+          
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    
+      <div class="container nopadding-x-md">
+        <div class="py-5" id="board"
+          style=margin-top:0>
+          
+          <div class="container">
+            <div class="row">
+              <div class="col-12 col-md-10 m-auto">
+                
+
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2020/09/06/ES%E4%B8%AD%E7%9A%84%E7%B4%A2%E5%BC%95%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F%E7%AE%A1%E7%90%86/" target="_self">
+          ES中的索引生命周期管理
+        </a>
+      </h1>
+
+      <p class="index-excerpt">
+        <a href="/2020/09/06/ES%E4%B8%AD%E7%9A%84%E7%B4%A2%E5%BC%95%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F%E7%AE%A1%E7%90%86/" target="_self">
+          
+          ILMILM ：索引生命周期管理，即 Manage the index lifecycle 。  使用ILM应确保集群中的所有节点运行的是同一个版本，不然无法保证他们会按预期工作。  索引生命周期索引的生命周期有四个阶段：  Hot：索引更新和查询很活跃。 Warm：索引不再更新，但仍然有查询 Cold：索引不再更新，只有很少的查询，而且查询速度也很慢 Delete：索引不需要了，可以安全的删除
+        </a>
+      </p>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2020-09-06 17:26" pubdate>
+              2020-09-06
+            </time>
+          </div>
+        
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/Elasticsearch/">Elasticsearch</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2020/08/16/Elasticsearch%E8%87%AA%E5%AE%9A%E4%B9%89%E6%96%87%E6%A1%A3%E5%BE%97%E5%88%86%E5%B9%B6%E6%8E%92%E5%BA%8F/" target="_self">
+          Elasticsearch自定义文档得分并排序
+        </a>
+      </h1>
+
+      <p class="index-excerpt">
+        <a href="/2020/08/16/Elasticsearch%E8%87%AA%E5%AE%9A%E4%B9%89%E6%96%87%E6%A1%A3%E5%BE%97%E5%88%86%E5%B9%B6%E6%8E%92%E5%BA%8F/" target="_self">
+          
+          大多数情况下，我们需要对查询结果排序，比方说按最新时间降序、按金额降序等。我们只需要对相应的字段 sort 即可。但有时候也会出现一些复杂的情况，比方说有A、B、C、D、E类数据，他想让你给这类数据重新定义优先级，按照B、E、D、A、C的顺序展示，并且每类数据内部按时间降序。然而最近我们也提出了一个类似这样的需求，查阅相关文档后，发现Elasticsearch里的function_socre函数可
+        </a>
+      </p>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2020-08-16 19:21" pubdate>
+              2020-08-16
+            </time>
+          </div>
+        
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/Elasticsearch/">Elasticsearch</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2020/08/05/Elasticsearch%E4%B8%ADScript%E8%84%9A%E6%9C%AC%E6%89%A7%E8%A1%8C%E9%99%A4%E6%B3%95%E9%81%87%E5%88%B0%E7%9A%84%E9%97%AE%E9%A2%98/" target="_self">
+          Elasticsearch中Script脚本执行除法遇到的问题
+        </a>
+      </h1>
+
+      <p class="index-excerpt">
+        <a href="/2020/08/05/Elasticsearch%E4%B8%ADScript%E8%84%9A%E6%9C%AC%E6%89%A7%E8%A1%8C%E9%99%A4%E6%B3%95%E9%81%87%E5%88%B0%E7%9A%84%E9%97%AE%E9%A2%98/" target="_self">
+          
+          最近有一个需求，需要修改ES文档中的金额，以前是以 元 为单位，现在要换算成以 万元 为单位，但并不是所有数据都需要做处理，有一个Excel存储着不需要处理的数据。我第一时间想到的就是用 Python 写一个脚本处理ES文档，噼里啪啦一顿操作之后，基本就实现了该功能。但是处理的结果并不是预期的那样。下面我简单的举一个例子来复现一下我所遇到的问题。 首先，创建一个索引 test , 12# 创建te
+        </a>
+      </p>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2020-08-05 23:56" pubdate>
+              2020-08-05
+            </time>
+          </div>
+        
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/Elasticsearch/">Elasticsearch</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2019/01/01/%E4%BD%BF%E7%94%A8Python%E8%8E%B7%E5%8F%96%E5%BE%AE%E4%BF%A1%E5%A5%BD%E5%8F%8B%E5%B9%B6%E8%BF%9B%E8%A1%8C%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90/" target="_self">
+          使用Python获取微信好友并进行数据分析
+        </a>
+      </h1>
+
+      <p class="index-excerpt">
+        <a href="/2019/01/01/%E4%BD%BF%E7%94%A8Python%E8%8E%B7%E5%8F%96%E5%BE%AE%E4%BF%A1%E5%A5%BD%E5%8F%8B%E5%B9%B6%E8%BF%9B%E8%A1%8C%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90/" target="_self">
+          
+          最近看到微信公众号推荐了些文章，有关于用Python爬取自己的微信好友，然后做了一些分析。其实之前我也有过这样的想法，一直没去实现。刚好今天元旦，回公司写了这么一个小项目。 其实获取微信好友很简单，有现成的模块直接使用，这是 itchat 的官网https:&#x2F;&#x2F;itchat.readthedocs.io&#x2F;zh&#x2F;latest&#x2F; 。首先通过 pip3 进行安装   1pip3 install itch
+        </a>
+      </p>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2019-01-01 22:05" pubdate>
+              2019-01-01
+            </time>
+          </div>
+        
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/Python/">Python</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2018/12/25/%E8%AE%A9SQL%E9%A3%9E%E8%B5%B7%E6%9D%A5/" target="_self">
+          让SQL飞起来
+        </a>
+      </h1>
+
+      <p class="index-excerpt">
+        <a href="/2018/12/25/%E8%AE%A9SQL%E9%A3%9E%E8%B5%B7%E6%9D%A5/" target="_self">
+          
+          作为一名JAVA开发者，对SQL的使用是必不可少的，当数量级别达到一定量的时候，一个好的SQL可以让程序跑的更顺畅。最近也不是很忙，就将双十一购买的这本《SQL进阶教程》阅读了前面一部分，给我的感受就是有种醍醐灌顶的感觉，也让我对SQL有了进一步的理解，里面的知识点很好的解决了在工作中经常会遇到的问题。下面是部分内容，推荐给大家。 使用高效的查询 参数是子查询时，使用EXISTS代替IN如果连接列
+        </a>
+      </p>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2018-12-25 14:40" pubdate>
+              2018-12-25
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-category"></i>
+            
+              <a href="/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/">数据库</a>
+            
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/MySQL/">MySQL</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2018/11/27/Redis%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-%E6%8C%81%E4%B9%85%E5%8C%96/" target="_self">
+          Redis学习笔记---持久化
+        </a>
+      </h1>
+
+      <p class="index-excerpt">
+        <a href="/2018/11/27/Redis%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-%E6%8C%81%E4%B9%85%E5%8C%96/" target="_self">
+          
+          将数据从内存中以某种形式同步到硬盘中，使得重启后可以根据硬盘中的记录恢复数据，这一过程就是持久化。 Redis支持两种方式的持久化:  RDB方式：根据指定规则“定时”将内存中的数据存储在硬盘上； AOF方式：每次执行命令后将命令本身记录下来。  一、RDB方式​ RDB方式的持久化是通过快照(snapshotting)完成的，当完成一定条件时Redis会自动将内存中的所有数据生成一份副本并存储在
+        </a>
+      </p>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2018-11-27 16:47" pubdate>
+              2018-11-27
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-category"></i>
+            
+              <a href="/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/">数据库</a>
+            
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/Redis/">Redis</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2018/11/26/Redis%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-%E8%BF%9B%E9%98%B6%E7%AF%87/" target="_self">
+          Redis学习笔记---进阶篇
+        </a>
+      </h1>
+
+      <p class="index-excerpt">
+        <a href="/2018/11/26/Redis%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-%E8%BF%9B%E9%98%B6%E7%AF%87/" target="_self">
+          
+          一、事务1.MULTI命令Redis中的事务( transaction )是一组命令的集合。一个事务中的命令要么都执行，要么都不执行。Redis通过 MULTI 开启事务，之后的命令将被存储在等待执行的事务队列中，使用 EXEC 命令将等待执行的事务队列中的所有命令按照发送顺序依次执行。EXEC 命令的返回值就是这些命令的返回值组成的列表。返回值顺序和命令的顺序相同。   123456789101
+        </a>
+      </p>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2018-11-26 00:42" pubdate>
+              2018-11-26
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-category"></i>
+            
+              <a href="/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/">数据库</a>
+            
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/Redis/">Redis</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2018/10/29/Redis%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/" target="_self">
+          Redis学习笔记---数据类型
+        </a>
+      </h1>
+
+      <p class="index-excerpt">
+        <a href="/2018/10/29/Redis%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/" target="_self">
+          
+          基础命令Redis 是 REmote DIctionary Server (远程字典服务器)的缩写，它以 字典结构 存储数据。现在我们来学习它的五种键值数据类型。学习之前先来了解几个基础命令。 先开启Redis服务： 1$ redis-server    接着开启Redis客户端： 1$ redis-cli    获取所有键： 1127.0.0.1:6379&gt; KEYS *    Redis
+        </a>
+      </p>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2018-10-29 00:07" pubdate>
+              2018-10-29
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-category"></i>
+            
+              <a href="/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/">数据库</a>
+            
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/Redis/">Redis</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2018/10/24/Redis%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-%E5%9F%BA%E7%A1%80%E4%B8%80/" target="_self">
+          Redis学习笔记---基础一
+        </a>
+      </h1>
+
+      <p class="index-excerpt">
+        <a href="/2018/10/24/Redis%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-%E5%9F%BA%E7%A1%80%E4%B8%80/" target="_self">
+          
+          Redis简介Redis是一个开源的、高性能的、基于键值对的缓存与存储系统，通过提供多种键值数据类型来适应不同场景下的缓存与存储需求。同时Redis的诸多高层级功能使其可以胜任消息队列、任务队列等不同角色。 Redis的特性1.键值数据类型 字符串类型 散列类型 列表类型 集合类型 有序集合类型  2.内存存储于持久化Redis数据库中的所有数据都是存储在内存中。由于内存的读写速度远快于硬盘，因此
+        </a>
+      </p>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2018-10-24 00:00" pubdate>
+              2018-10-24
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-category"></i>
+            
+              <a href="/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/">数据库</a>
+            
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/Redis/">Redis</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2018/10/19/SpringBoot%E6%95%B4%E5%90%88Redis%E5%BC%80%E5%8F%91RESTful-API%E6%8E%A5%E5%8F%A3/" target="_self">
+          SpringBoot整合Redis开发RESTful API接口
+        </a>
+      </h1>
+
+      <p class="index-excerpt">
+        <a href="/2018/10/19/SpringBoot%E6%95%B4%E5%90%88Redis%E5%BC%80%E5%8F%91RESTful-API%E6%8E%A5%E5%8F%A3/" target="_self">
+          
+          项目框架12345678910111213141516171819202122├── pom.xml  ├── springbootreidsrestfulapi.iml  ├── src  │   ├── main  │   │   ├── java  │   │   │   └── com  │   │   │       └── jenkin  │   │   │           └──
+        </a>
+      </p>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2018-10-19 23:48" pubdate>
+              2018-10-19
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-category"></i>
+            
+              <a href="/categories/%E5%90%8E%E7%AB%AF/">后端</a>
+            
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/Java/">Java</a>
+            
+              <a href="/tags/SpringBoot/">SpringBoot</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+
+
+
+
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v"
+                 for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+
+    
+  </main>
+
+  <footer class="text-center mt-5 py-3">
+  <div class="footer-content">
+     <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+  </div>
+  
+  <div class="statistics">
+    
+    
+
+    
+      
+        <!-- LeanCloud 统计PV -->
+        <span id="leancloud-site-pv-container" style="display: none">
+            总访问量 
+            <span id="leancloud-site-pv"></span>
+             次
+          </span>
+      
+      
+        <!-- LeanCloud 统计UV -->
+        <span id="leancloud-site-uv-container" style="display: none">
+            总访客数 
+            <span id="leancloud-site-uv"></span>
+             人
+          </span>
+      
+
+    
+  </div>
+
+
+  
+
+  
+</footer>
+
+
+  <!-- SCRIPTS -->
+  
+  <script  src="https://cdn.jsdelivr.net/npm/nprogress@0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nprogress@0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js" ></script>
+<script  src="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+<!-- Plugins -->
+
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+  
+
+
+
+
+
+
+  <script defer src="/js/leancloud.js" ></script>
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/typed.js@2/lib/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var title = document.getElementById('subtitle').title;
+      
+        typing(title);
+      
+    })(window, document);
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+    <!-- Baidu Analytics -->
+    <script defer>
+      var _hmt = _hmt || [];
+      (function () {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?7ed5592b09af70dfe085339cb29b1318";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(hm, s);
+      })();
+    </script>
+  
+
+  
+    <!-- Google Analytics -->
+    <script defer>
+      window.ga = window.ga || function () { (ga.q = ga.q || []).push(arguments) };
+      ga.l = +new Date;
+      ga('create', 'UA-127759237-1', 'auto');
+      ga('send', 'pageview');
+    </script>
+    <script async src='https://www.google-analytics.com/analytics.js'></script>
+  
+
+  
+
+  
+
+  
+
+  
+
+
+
+
+
+<!-- 主题的启动项 保持在最底部 -->
+<script  src="/js/boot.js" ></script>
+
+
+</body>
+</html>

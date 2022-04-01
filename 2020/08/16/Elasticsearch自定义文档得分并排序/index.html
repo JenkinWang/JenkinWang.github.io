@@ -1,0 +1,657 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon.png">
+  <link rel="icon" href="/img/favicon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="JenkinWang">
+  <meta name="keywords" content="Jenkin Wang,jenkinwang,慵懒的程序猿">
+  
+    <meta name="description" content="大多数情况下，我们需要对查询结果排序，比方说按最新时间降序、按金额降序等。我们只需要对相应的字段 sort 即可。但有时候也会出现一些复杂的情况，比方说有A、B、C、D、E类数据，他想让你给这类数据重新定义优先级，按照B、E、D、A、C的顺序展示，并且每类数据内部按时间降序。然而最近我们也提出了一个类似这样的需求，查阅相关文档后，发现Elasticsearch里的function_socre函数可">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Elasticsearch自定义文档得分并排序">
+<meta property="og:url" content="https://jenkinwang.github.io/2020/08/16/Elasticsearch%E8%87%AA%E5%AE%9A%E4%B9%89%E6%96%87%E6%A1%A3%E5%BE%97%E5%88%86%E5%B9%B6%E6%8E%92%E5%BA%8F/index.html">
+<meta property="og:site_name" content="JenkinWang&#39;s Blog">
+<meta property="og:description" content="大多数情况下，我们需要对查询结果排序，比方说按最新时间降序、按金额降序等。我们只需要对相应的字段 sort 即可。但有时候也会出现一些复杂的情况，比方说有A、B、C、D、E类数据，他想让你给这类数据重新定义优先级，按照B、E、D、A、C的顺序展示，并且每类数据内部按时间降序。然而最近我们也提出了一个类似这样的需求，查阅相关文档后，发现Elasticsearch里的function_socre函数可">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://jenkinwang.github.io/images/decay_function.png">
+<meta property="article:published_time" content="2020-08-16T11:21:50.000Z">
+<meta property="article:modified_time" content="2022-04-01T01:08:57.721Z">
+<meta property="article:author" content="JenkinWang">
+<meta property="article:tag" content="Elasticsearch">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://jenkinwang.github.io/images/decay_function.png">
+  
+  
+  <title>Elasticsearch自定义文档得分并排序 - JenkinWang&#39;s Blog</title>
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/css/bootstrap.min.css" />
+
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@4/github-markdown.min.css" />
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hint.css@2/hint.min.css" />
+
+  
+    
+    
+      
+      <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@10/styles/rainbow.min.css" />
+    
+  
+
+  
+    <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.css" />
+  
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_ba1fz6golrf.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+<!-- 自定义样式保持在最底部 -->
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    var CONFIG = {"hostname":"jenkinwang.github.io","root":"/","version":"1.8.14","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"right","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"copy_btn":true,"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"baidu":"7ed5592b09af70dfe085339cb29b1318","google":"UA-127759237-1","gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":"XXMm2rtWBI6cupjbXDo12wMe-gzGzoHsz","app_key":"eUc4Yy11oCnWhPfvgCsIso4g","server_url":"https://xxmm2rtw.lc-cn-n1-shared.com","path":"window.location.pathname","ignore_local":true}},"search_path":"/local-search.xml"};
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+<meta name="generator" content="Hexo 6.1.0"></head>
+
+
+<body>
+  <header style="height: 70vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>一只慵懒的程序猿</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              &nbsp;<i class="iconfont icon-search"></i>&nbsp;
+            </a>
+          </li>
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    <div class="banner" id="banner" parallax=true
+         style="background: url('/img/default.png') no-repeat center center;
+           background-size: cover;">
+      <div class="full-bg-img">
+        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+          <div class="page-header text-center fade-in-up">
+            <span class="h2" id="subtitle" title="Elasticsearch自定义文档得分并排序">
+              
+            </span>
+
+            
+              <div class="mt-3">
+  
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-author" aria-hidden="true"></i>
+      JenkinWang
+    </span>
+  
+  
+    <span class="post-meta">
+      <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+      <time datetime="2020-08-16 19:21" pubdate>
+        2020年8月16日 晚上
+      </time>
+    </span>
+  
+</div>
+
+<div class="mt-1">
+  
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-chart"></i>
+      6.2k 字
+    </span>
+  
+
+  
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-clock-fill"></i>
+      
+      
+      52 分钟
+    </span>
+  
+
+  
+  
+    
+      <!-- LeanCloud 统计文章PV -->
+      <span id="leancloud-page-views-container" class="post-meta" style="display: none">
+        <i class="iconfont icon-eye" aria-hidden="true"></i>
+        <span id="leancloud-page-views"></span> 次
+      </span>
+    
+  
+</div>
+
+            
+          </div>
+
+          
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="d-none d-lg-block col-lg-2"></div>
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div class="py-5" id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">Elasticsearch自定义文档得分并排序</h1>
+            
+            <div class="markdown-body">
+              <p>大多数情况下，我们需要对查询结果排序，比方说按最新时间降序、按金额降序等。我们只需要对相应的字段 <code>sort</code> 即可。但有时候也会出现一些复杂的情况，比方说有A、B、C、D、E类数据，他想让你给这类数据重新定义优先级，按照B、E、D、A、C的顺序展示，并且每类数据内部按时间降序。然而最近我们也提出了一个类似这样的需求，查阅相关文档后，发现Elasticsearch里的<code>function_socre</code>函数可以实现这一功能， 遂将此学习内容做一个记录。</p>
+<p>先来看看 <code>function_score</code> 是什么，它能做什么？根据官网的原话：</p>
+<blockquote>
+<p>The <code>function_score</code> allows you to modify the score of documents that are retrieved by a query.</p>
+</blockquote>
+<p><code>function_score</code> 允许你修改通过查询检索出来的文档的得分。</p>
+<p>下面我们通过一些简单的例子来看看 <code>function_score</code> 怎么使用。</p>
+<p><code>function_score</code> 可以为所有文档生成一个随机分数：</p>
+<figure class="highlight bash"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs bash">GET us_police_shooting_index/_search  <br>&#123;  <br>  <span class="hljs-string">&quot;query&quot;</span>: &#123;  <br>	<span class="hljs-string">&quot;function_score&quot;</span>: &#123;  <br>	  <span class="hljs-string">&quot;query&quot;</span>: &#123;  <br>	  <span class="hljs-string">&quot;match_all&quot;</span>: &#123;&#125;  <br>	&#125;,  <br>	<span class="hljs-string">&quot;random_score&quot;</span>: &#123;&#125;,  <br>	<span class="hljs-string">&quot;boost&quot;</span>: 5,  <br>	<span class="hljs-string">&quot;boost_mode&quot;</span>: <span class="hljs-string">&quot;min&quot;</span>  <br>	&#125;  <br>  &#125;  <br>&#125;  <br></code></pre></div></td></tr></table></figure>
+
+<p>还可以组合不同的过滤条件，设置权重：</p>
+<figure class="highlight bash"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs bash">GET us_police_shooting_index/_search  <br>&#123;  <br>  <span class="hljs-string">&quot;query&quot;</span>: &#123;  <br>	<span class="hljs-string">&quot;function_score&quot;</span>: &#123;  <br>	  <span class="hljs-string">&quot;query&quot;</span>: &#123;  <br>		<span class="hljs-string">&quot;match_all&quot;</span>: &#123;&#125;  <br>	  &#125;,  <br>	  <span class="hljs-string">&quot;functions&quot;</span>: [  <br>		&#123;  <br>		  <span class="hljs-string">&quot;filter&quot;</span>: &#123;  <br>			<span class="hljs-string">&quot;match&quot;</span>: &#123;  <br>			  <span class="hljs-string">&quot;race&quot;</span>: <span class="hljs-string">&quot;Asian&quot;</span>  <br>			&#125;  <br>		  &#125;,  <br>		  <span class="hljs-string">&quot;weight&quot;</span>: 8  <br>		&#125;,  <br>		&#123;  <br>		  <span class="hljs-string">&quot;filter&quot;</span>: &#123;  <br>			<span class="hljs-string">&quot;match&quot;</span>: &#123;  <br>			  <span class="hljs-string">&quot;race&quot;</span>: <span class="hljs-string">&quot;White&quot;</span>  <br>			&#125;  <br>		  &#125;,  <br>		  <span class="hljs-string">&quot;weight&quot;</span>: 2  <br>		&#125;  <br>	  ],  <br>	  <span class="hljs-string">&quot;max_boost&quot;</span>: 20,  <br>	  <span class="hljs-string">&quot;score_mode&quot;</span>: <span class="hljs-string">&quot;max&quot;</span>,  <br>	  <span class="hljs-string">&quot;boost_mode&quot;</span>: <span class="hljs-string">&quot;sum&quot;</span>,  <br>	  <span class="hljs-string">&quot;min_score&quot;</span>: 3  <br>	&#125;  <br>  &#125;  <br>&#125;  <br></code></pre></div></td></tr></table></figure>
+
+<blockquote>
+<p>如果 <code>functions</code> 里的 <code>filter</code> 未给出，那么将会匹配所有文档，相当于 <code>&quot;match_all&quot;:&#123;&#125;</code> 。</p>
+</blockquote>
+<p>我们看看 <code>function_score</code> 为我们提供了哪些参数：</p>
+<ul>
+<li><p><code>score_mode</code> 指定了该如何去合并每个文档生成的评分：</p>
+<table>
+<thead>
+<tr>
+<th align="center"><strong>score_mode</strong></th>
+<th align="center"><strong>定义</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center"><code>multiply</code></td>
+<td align="center"><code>函数结果相乘（默认）</code></td>
+</tr>
+<tr>
+<td align="center"><code>sum</code></td>
+<td align="center"><code>函数结果相加</code></td>
+</tr>
+<tr>
+<td align="center"><code>avg</code></td>
+<td align="center"><code>函数结果的平均值</code></td>
+</tr>
+<tr>
+<td align="center"><code>first</code></td>
+<td align="center"><code>使用首个函数的结果做为最终结果</code></td>
+</tr>
+<tr>
+<td align="center"><code>max</code></td>
+<td align="center"><code>函数结果的最大值</code></td>
+</tr>
+<tr>
+<td align="center"><code>min</code></td>
+<td align="center"><code>函数结果的最小值</code></td>
+</tr>
+</tbody></table>
+</li>
+<li><p><code>boost_mode</code> 可以用来控制函数与查询评分 <code>_score</code> 合并后的结果：</p>
+<table>
+<thead>
+<tr>
+<th align="center"><strong>boost_mode</strong></th>
+<th align="center"><strong>定义</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center"><code>multiply</code></td>
+<td align="center"><code>评分_score与函数值的乘积(默认)</code></td>
+</tr>
+<tr>
+<td align="center"><code>replace</code></td>
+<td align="center"><code>评分_score会被忽略，仅使用函数值</code></td>
+</tr>
+<tr>
+<td align="center"><code>sum</code></td>
+<td align="center"><code>评分_score与函数值之和</code></td>
+</tr>
+<tr>
+<td align="center"><code>avg</code></td>
+<td align="center"><code>评分_score与函数值的平均值</code></td>
+</tr>
+<tr>
+<td align="center"><code>max</code></td>
+<td align="center"><code>评分_score与函数值间的最大值</code></td>
+</tr>
+<tr>
+<td align="center"><code>min</code></td>
+<td align="center"><code>评分_score与函数值间的最小值</code></td>
+</tr>
+</tbody></table>
+</li>
+<li><p><code>min_score</code> 可以设置为期望分数的阈值，能够排出不符合特定分数阈值的文档。</p>
+</li>
+<li><p><code>max_boost</code> 可以限制函数的最大效果，但是不会对最终的评分 <code>_score</code> 产生直接的影响。</p>
+</li>
+</ul>
+<p><code>function_score</code> 还提供几种类型的评分函数：</p>
+<ul>
+<li><code>script_score</code> ：脚本评分函数允许计算自定义查询的评分，脚本表达式需使用文档中的数值字段。查询的分数将与脚本评分的结果相乘，如果不想使用这种方式，可通过设置 <code>&quot;boost_mode&quot;:&quot;replace&quot;</code> 来禁止。</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs bash">GET /_search  <br>&#123;  <br>  <span class="hljs-string">&quot;query&quot;</span>: &#123;  <br>	<span class="hljs-string">&quot;function_score&quot;</span>: &#123;  <br>	  <span class="hljs-string">&quot;query&quot;</span>: &#123;  <br>		<span class="hljs-string">&quot;match&quot;</span>: &#123; <span class="hljs-string">&quot;message&quot;</span>: <span class="hljs-string">&quot;elasticsearch&quot;</span> &#125;  <br>	  &#125;,  <br>	  <span class="hljs-string">&quot;script_score&quot;</span>: &#123;  <br>		<span class="hljs-string">&quot;script&quot;</span>: &#123;  <br>		  <span class="hljs-string">&quot;source&quot;</span>: <span class="hljs-string">&quot;Math.log(2 + doc[&#x27;likes&#x27;].value)&quot;</span>  <br>		&#125;  <br>	  &#125;  <br>	&#125;  <br>  &#125;  <br>&#125;  <br></code></pre></div></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs bash">GET /_search  <br>&#123;  <br>  <span class="hljs-string">&quot;query&quot;</span>: &#123;  <br>	<span class="hljs-string">&quot;function_score&quot;</span>: &#123;  <br>	  <span class="hljs-string">&quot;query&quot;</span>: &#123;  <br>		<span class="hljs-string">&quot;match&quot;</span>: &#123; <span class="hljs-string">&quot;message&quot;</span>: <span class="hljs-string">&quot;elasticsearch&quot;</span> &#125;  <br>	  &#125;,  <br>	  <span class="hljs-string">&quot;script_score&quot;</span>: &#123;  <br>		<span class="hljs-string">&quot;script&quot;</span>: &#123;  <br>		  <span class="hljs-string">&quot;params&quot;</span>: &#123;  <br>			<span class="hljs-string">&quot;a&quot;</span>: 5,  <br>			<span class="hljs-string">&quot;b&quot;</span>: 1.2  <br>		  &#125;,  <br>		  <span class="hljs-string">&quot;source&quot;</span>: <span class="hljs-string">&quot;params.a / Math.pow(params.b, doc[&#x27;likes&#x27;].value)&quot;</span>  <br>		&#125;  <br>	  &#125;  <br>	&#125;  <br>  &#125;  <br>&#125;  <br></code></pre></div></td></tr></table></figure>
+<ul>
+<li><p><code>weight</code> ：权重函数可以将评分与 <code>weight</code> 值相乘，<code>weight</code> 的值是 <code>float</code> 类型。</p>
+</li>
+<li><p><code>random_score</code> ：随机评分函数会产生一个0到1之间的分数，当种子 <code>feed</code> 值相同时，生成的随机结果是一致的。</p>
+</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs bash">GET /_search  <br>&#123;  <br>  <span class="hljs-string">&quot;query&quot;</span>: &#123;  <br>	<span class="hljs-string">&quot;function_score&quot;</span>: &#123;  <br>	  <span class="hljs-string">&quot;random_score&quot;</span>: &#123;  <br>		<span class="hljs-string">&quot;seed&quot;</span>: 10,  <br>		<span class="hljs-string">&quot;field&quot;</span>: <span class="hljs-string">&quot;_seq_no&quot;</span>  <br>	  &#125;  <br>	&#125;  <br>  &#125;  <br>&#125;  <br></code></pre></div></td></tr></table></figure>
+
+<ul>
+<li><code>field_value_factor</code> ：通过使用文档中的某个字段来影响评分。如果这个字段有多个值，那么只有第一个值才被用来计算评分。</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs bash">GET /_search  <br>&#123;  <br>  <span class="hljs-string">&quot;query&quot;</span>: &#123;  <br>	<span class="hljs-string">&quot;function_score&quot;</span>: &#123;  <br>	  <span class="hljs-string">&quot;field_value_factor&quot;</span>: &#123;  <br>		<span class="hljs-string">&quot;field&quot;</span>: <span class="hljs-string">&quot;likes&quot;</span>,  <br>		<span class="hljs-string">&quot;factor&quot;</span>: 1.2,  <br>		<span class="hljs-string">&quot;modifier&quot;</span>: <span class="hljs-string">&quot;sqrt&quot;</span>,  <br>		<span class="hljs-string">&quot;missing&quot;</span>: 1  <br>	  &#125;  <br>	&#125;  <br>  &#125;  <br>&#125;  <br><span class="hljs-comment"># 上面评分的计算相当于 sqrt(1.2 * doc[&#x27;likes&#x27;].value)  </span><br></code></pre></div></td></tr></table></figure>
+<ul>
+<li><p><code>filed</code> ：文档中提取的字段。</p>
+</li>
+<li><p><code>factor</code> ：字段值乘以的可选因子，默认是 <code>1</code> 。</p>
+</li>
+<li><p><code>modifier</code> ：<code>none</code>, <code>log</code>, <code>log1p</code>, <code>log2p</code>, <code>ln</code>, <code>ln1p</code>, <code>ln2p</code>, <code>square</code>, <code>sqrt</code>, <code>reciprocal</code>。默认值是 <code>none</code>.</p>
+</li>
+<li><p><code>decay_functions</code> ：衰减函数的功能与范围查询类似，但它具有更平滑的边缘。衰减函数支持 <code>gauss</code> 、<code>linear</code> 、<code>exp</code> 中任意一种函数，并且都能接收以下参数：</p>
+<ul>
+<li><code>origin</code> ：中心点或字段可能的最佳值，落在原点 <code>origin</code> 上的文档评分 <code>_score</code> 为满分 <code>1.0</code> 。字段必须是数值、日期或地理坐标类型。</li>
+<li><code>scale</code> ：衰减率，一个文档从原点 <code>origin</code> 下落时，评分 <code>_score</code> 改变的速度。</li>
+<li><code>offset</code> ：以原点 <code>origin</code> 为中心点，为其设置一个非零的 <code>offset</code> 覆盖一个范围，而不只是单个原点。在范围 <code>-offset &lt;= origin &lt;= +offset</code> 内的所有评分 <code>_score</code> 都是 <code>1.0</code> 。</li>
+<li><code>decay</code> ：从原点 <code>origin</code> 衰减到 <code>scale</code> 所得的评分 <code>_score</code> ，默认是 <code>0.5</code> 。</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs bash">GET /_search  <br>&#123;  <br>  <span class="hljs-string">&quot;query&quot;</span>: &#123;  <br>	<span class="hljs-string">&quot;function_score&quot;</span>: &#123;  <br>	  <span class="hljs-string">&quot;functions&quot;</span>: [  <br>		&#123;  <br>		<span class="hljs-string">&quot;gauss&quot;</span>: &#123;  <br>		  <span class="hljs-string">&quot;price&quot;</span>: &#123;  <br>			<span class="hljs-string">&quot;origin&quot;</span>: <span class="hljs-string">&quot;0&quot;</span>,  <br>			<span class="hljs-string">&quot;scale&quot;</span>: <span class="hljs-string">&quot;20&quot;</span>  <br>		  &#125;  <br>		&#125;  <br>		&#125;,  <br>		&#123;  <br>		<span class="hljs-string">&quot;gauss&quot;</span>: &#123;  <br>		  <span class="hljs-string">&quot;location&quot;</span>: &#123;  <br>			<span class="hljs-string">&quot;origin&quot;</span>: <span class="hljs-string">&quot;11, 12&quot;</span>,  <br>			<span class="hljs-string">&quot;scale&quot;</span>: <span class="hljs-string">&quot;2km&quot;</span>  <br>		  &#125;  <br>		&#125;  <br>		&#125;  <br>	  ],  <br>	  <span class="hljs-string">&quot;query&quot;</span>: &#123;  <br>		<span class="hljs-string">&quot;match&quot;</span>: &#123;  <br>		  <span class="hljs-string">&quot;properties&quot;</span>: <span class="hljs-string">&quot;balcony&quot;</span>  <br>		&#125;  <br>	  &#125;,  <br>	  <span class="hljs-string">&quot;score_mode&quot;</span>: <span class="hljs-string">&quot;multiply&quot;</span>  <br>	&#125;  <br>  &#125;  <br>&#125;  <br></code></pre></div></td></tr></table></figure>
+
+<p>官方文档有这么一张图片说明了三个函数的衰减曲线形状：</p>
+<p><img src="/images/decay_function.png" srcset="/img/loading.gif" lazyload></p>
+<p>以上就是 <code>function_score</code> 函数的大部分内容。现在我们来具体实现文章开头提到的一个需求。我准备了一份不同歌手的歌曲发行时间的测试数据，主要字段有歌手名name、歌曲名song、发行时间publishDate。</p>
+<p>首先我们先按歌手名降序，发行时间升序，很容易能写出下面的DSL语句：</p>
+<figure class="highlight bash"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs bash">GET music_index/_search  <br>&#123;  <br>  <span class="hljs-string">&quot;query&quot;</span>: &#123;  <br>	<span class="hljs-string">&quot;match_all&quot;</span>: &#123;&#125;  <br>  &#125;,  <br>  <span class="hljs-string">&quot;sort&quot;</span>: [  <br>	&#123;  <br>	  <span class="hljs-string">&quot;name.keyword&quot;</span>: &#123;  <br>		<span class="hljs-string">&quot;order&quot;</span>: <span class="hljs-string">&quot;desc&quot;</span>  <br>	  &#125;,  <br>	  <span class="hljs-string">&quot;publishDate.keyword&quot;</span>: &#123;  <br>		<span class="hljs-string">&quot;order&quot;</span>: <span class="hljs-string">&quot;asc&quot;</span>  <br>	  &#125;  <br>	&#125;  <br>  ]  <br>&#125;<br></code></pre></div></td></tr></table></figure>
+
+<p>现在我想按许冠杰、邓丽君、陈百强的顺序进行展示，并且各自的歌曲按发行时间升序，<code>function_score</code> 就体现出它的作用了：</p>
+<figure class="highlight bash"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs bash">GET music_index/_search  <br>&#123;  <br>  <span class="hljs-string">&quot;query&quot;</span>: &#123;  <br>	<span class="hljs-string">&quot;function_score&quot;</span>: &#123;  <br>	  <span class="hljs-string">&quot;query&quot;</span>: &#123;  <br>		<span class="hljs-string">&quot;match_all&quot;</span>: &#123;&#125;  <br>	  &#125;,  <br>	  <span class="hljs-string">&quot;functions&quot;</span>: [  <br>		&#123;  <br>		  <span class="hljs-string">&quot;filter&quot;</span>: &#123;  <br>			<span class="hljs-string">&quot;term&quot;</span>: &#123;  <br>			  <span class="hljs-string">&quot;name.keyword&quot;</span>: <span class="hljs-string">&quot;许冠杰&quot;</span>  <br>			&#125;  <br>		  &#125;,  <br>		  <span class="hljs-string">&quot;weight&quot;</span>: 5  <br>		&#125;,  <br>		&#123;  <br>		  <span class="hljs-string">&quot;filter&quot;</span>: &#123;  <br>			<span class="hljs-string">&quot;term&quot;</span>: &#123;  <br>			  <span class="hljs-string">&quot;name.keyword&quot;</span>: <span class="hljs-string">&quot;邓丽君&quot;</span>  <br>			&#125;  <br>		  &#125;,  <br>		  <span class="hljs-string">&quot;weight&quot;</span>: 4  <br>		&#125;,  <br>		&#123;  <br>		  <span class="hljs-string">&quot;filter&quot;</span>: &#123;  <br>			<span class="hljs-string">&quot;term&quot;</span>: &#123;  <br>			  <span class="hljs-string">&quot;name.keyword&quot;</span>: <span class="hljs-string">&quot;陈百强&quot;</span>  <br>			&#125;  <br>		  &#125;,  <br>		  <span class="hljs-string">&quot;weight&quot;</span>: 3  <br>		&#125;  <br>	  ]  <br>	&#125;  <br>  &#125;,  <br>  <span class="hljs-string">&quot;sort&quot;</span>: [  <br>	&#123;  <br>	  <span class="hljs-string">&quot;_score&quot;</span>: &#123;  <br>		<span class="hljs-string">&quot;order&quot;</span>: <span class="hljs-string">&quot;desc&quot;</span>  <br>	  &#125;,  <br>	  <span class="hljs-string">&quot;publishDate.keyword&quot;</span>: &#123;  <br>		<span class="hljs-string">&quot;order&quot;</span>: <span class="hljs-string">&quot;asc&quot;</span>  <br>	  &#125;  <br>	&#125;  <br>  ]  <br>&#125;<br></code></pre></div></td></tr></table></figure>
+
+<p>由于查询文档太长，我就不粘贴查询结果了。感兴趣的可以自己动手尝试尝试，如果需要测试数据，公众号回复 <code>0816</code> 即可获取相关文件。</p>
+<blockquote>
+<p>相关链接：<br><a target="_blank" rel="noopener" href="https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-function-score-query.html">https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-function-score-query.html</a><br><a target="_blank" rel="noopener" href="https://www.elastic.co/guide/cn/elasticsearch/guide/current/function-score-query.html">https://www.elastic.co/guide/cn/elasticsearch/guide/current/function-score-query.html</a></p>
+</blockquote>
+
+            </div>
+            <hr>
+            <div>
+              <div class="post-metas mb-3">
+                
+                
+                  <div class="post-meta">
+                    <i class="iconfont icon-tags"></i>
+                    
+                      <a class="hover-with-bg" href="/tags/Elasticsearch/">Elasticsearch</a>
+                    
+                  </div>
+                
+              </div>
+              
+                <p class="note note-warning">
+                  
+                    本博客所有文章除特别声明外，均采用 <a target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh" rel="nofollow noopener noopener">CC BY-SA 4.0 协议</a> ，转载请注明出处！
+                  
+                </p>
+              
+              
+                <div class="post-prevnext">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2020/09/06/ES%E4%B8%AD%E7%9A%84%E7%B4%A2%E5%BC%95%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F%E7%AE%A1%E7%90%86/">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">ES中的索引生命周期管理</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2020/08/05/Elasticsearch%E4%B8%ADScript%E8%84%9A%E6%9C%AC%E6%89%A7%E8%A1%8C%E9%99%A4%E6%B3%95%E9%81%87%E5%88%B0%E7%9A%84%E9%97%AE%E9%A2%98/">
+                        <span class="hidden-mobile">Elasticsearch中Script脚本执行除法遇到的问题</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+    
+      <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
+        <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+      </div>
+    
+  </div>
+</div>
+
+<!-- Custom -->
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v"
+                 for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+
+    
+  </main>
+
+  <footer class="text-center mt-5 py-3">
+  <div class="footer-content">
+     <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+  </div>
+  
+  <div class="statistics">
+    
+    
+
+    
+      
+        <!-- LeanCloud 统计PV -->
+        <span id="leancloud-site-pv-container" style="display: none">
+            总访问量 
+            <span id="leancloud-site-pv"></span>
+             次
+          </span>
+      
+      
+        <!-- LeanCloud 统计UV -->
+        <span id="leancloud-site-uv-container" style="display: none">
+            总访客数 
+            <span id="leancloud-site-uv"></span>
+             人
+          </span>
+      
+
+    
+  </div>
+
+
+  
+
+  
+</footer>
+
+
+  <!-- SCRIPTS -->
+  
+  <script  src="https://cdn.jsdelivr.net/npm/nprogress@0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nprogress@0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js" ></script>
+<script  src="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+<!-- Plugins -->
+
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+  
+
+
+
+  
+    <script  src="https://cdn.jsdelivr.net/npm/tocbot@4/dist/tocbot.min.js" ></script>
+  
+  
+    <script  src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.js" ></script>
+  
+  
+    <script  src="https://cdn.jsdelivr.net/npm/anchor-js@4/anchor.min.js" ></script>
+  
+  
+    <script defer src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js" ></script>
+  
+
+
+
+
+  <script defer src="/js/leancloud.js" ></script>
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/typed.js@2/lib/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var title = document.getElementById('subtitle').title;
+      
+        typing(title);
+      
+    })(window, document);
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+    <!-- Baidu Analytics -->
+    <script defer>
+      var _hmt = _hmt || [];
+      (function () {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?7ed5592b09af70dfe085339cb29b1318";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(hm, s);
+      })();
+    </script>
+  
+
+  
+    <!-- Google Analytics -->
+    <script defer>
+      window.ga = window.ga || function () { (ga.q = ga.q || []).push(arguments) };
+      ga.l = +new Date;
+      ga('create', 'UA-127759237-1', 'auto');
+      ga('send', 'pageview');
+    </script>
+    <script async src='https://www.google-analytics.com/analytics.js'></script>
+  
+
+  
+
+  
+
+  
+
+  
+
+
+
+
+
+<!-- 主题的启动项 保持在最底部 -->
+<script  src="/js/boot.js" ></script>
+
+
+</body>
+</html>
